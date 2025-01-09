@@ -1,10 +1,7 @@
 package solver
 
 import (
-	"bytes"
 	"fmt"
-	"os"
-	"path/filepath"
 )
 
 const (
@@ -19,12 +16,15 @@ type Solver struct {
 	solution solutionState
 	problem  problemState
 	wordFP   string
+
+	isInteractive bool
 }
 
 // New returns a new *Solver configured by the options functions.
 func New(options ...func(*Solver)) *Solver {
 	solver := &Solver{
-		wordFP: _WordRelFP,
+		wordFP:        _WordRelFP,
+		isInteractive: false,
 		solution: solutionState{
 			words:         []string{},
 			score:         0,
@@ -50,6 +50,13 @@ func WithWordFP(path string) func(*Solver) {
 	}
 }
 
+// WithInteractivityToggle sets the --interactive toggle.
+func WithInteractivityToggle(interactive bool) func(*Solver) {
+	return func(s *Solver) {
+		s.isInteractive = interactive
+	}
+}
+
 func getFragmentScores() []int {
 	return []int{1, 2, 4, 8}
 }
@@ -68,7 +75,9 @@ func (s *Solver) Solve(fragments []string) ([]string, int, error) {
 	// single-fragment words
 	for i, fLen1 := range fragments {
 		numFragments := 1
-		s.checkAndRecord(fLen1, numFragments)
+		if err := s.checkAndRecord(fLen1, numFragments); err != nil {
+			return nil, 0, fmt.Errorf("check and record: %w", err)
+		}
 
 		// two-fragment words
 		for j, fragment2 := range fragments {
@@ -77,7 +86,9 @@ func (s *Solver) Solve(fragments []string) ([]string, int, error) {
 			}
 
 			numFragments = 2
-			s.checkAndRecord(fLen1+fragment2, numFragments)
+			if err := s.checkAndRecord(fLen1+fragment2, numFragments); err != nil {
+				return nil, 0, fmt.Errorf("check and record: %w", err)
+			}
 
 			// three-fragment words
 			for k, fragment3 := range fragments {
@@ -86,7 +97,9 @@ func (s *Solver) Solve(fragments []string) ([]string, int, error) {
 				}
 
 				numFragments = 3
-				s.checkAndRecord(fLen1+fragment2+fragment3, numFragments)
+				if err := s.checkAndRecord(fLen1+fragment2+fragment3, numFragments); err != nil {
+					return nil, 0, fmt.Errorf("check and record: %w", err)
+				}
 
 				// four-fragment words
 				for l, fragment4 := range fragments {
@@ -95,7 +108,9 @@ func (s *Solver) Solve(fragments []string) ([]string, int, error) {
 					}
 
 					numFragments = 4
-					s.checkAndRecord(fLen1+fragment2+fragment3+fragment4, numFragments)
+					if err := s.checkAndRecord(fLen1+fragment2+fragment3+fragment4, numFragments); err != nil {
+						return nil, 0, fmt.Errorf("check and record: %w", err)
+					}
 				}
 			}
 		}
@@ -107,35 +122,40 @@ func (s *Solver) Solve(fragments []string) ([]string, int, error) {
 	return s.solution.words, s.solution.score, nil
 }
 
-// getDict reads a dictionary from disk.
-func (s *Solver) getDict() error {
-	fp, err := filepath.Abs(s.wordFP)
-	if err != nil {
-		return fmt.Errorf("get filepath: %w", err)
+func (s *Solver) checkAndRecord(base string, numFragments int) error {
+	if !wordInDict(base, s.problem.dictionary) {
+		return nil
 	}
 
-	wordStream, err := os.ReadFile(fp)
-	if err != nil {
-		return fmt.Errorf("read file: %w", err)
+	var (
+		ok, del bool
+		err     error
+	)
+
+	if s.isInteractive {
+		if ok, err = isWordSolution(base); err != nil {
+			return fmt.Errorf("is word solution: %w", err)
+		}
+
+		if !ok {
+			if del, err = confirmDelete(); err != nil {
+				return fmt.Errorf("confirm delete: %w", err)
+			}
+
+			if del {
+				if err = s.RemoveWordFromDict(base); err != nil {
+					return fmt.Errorf("remove word from dict: %w", err)
+				}
+			}
+
+			return nil
+		}
 	}
 
-	words := bytes.Split(wordStream, []byte{'\n'})
-	wordMap := make(map[string]struct{}, len(words))
-
-	for i := 0; i < len(words); i++ {
-		wordMap[string(words[i])] = struct{}{}
-	}
-
-	s.problem.dictionary = wordMap
+	s.solution.addWord(base)
+	s.solution.updateScore(numFragments)
 
 	return nil
-}
-
-func (s *Solver) checkAndRecord(base string, numFragments int) {
-	if wordInDict(base, s.problem.dictionary) {
-		s.solution.addWord(base)
-		s.solution.updateScore(numFragments)
-	}
 }
 
 func wordInDict(word string, dict map[string]struct{}) bool {

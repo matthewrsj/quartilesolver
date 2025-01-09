@@ -27,8 +27,9 @@ func (f *fragmentArgs) Set(value string) error {
 
 func main() {
 	var (
-		inFile   = flag.String("in", "", "input file containing line-delineated word fragments")
-		wordFile = flag.String("words", defaultWordRelFP, "file containing line-delineated dictionary of words")
+		inFile          = flag.String("in", "", "input file containing line-delineated word fragments")
+		wordFile        = flag.String("words", defaultWordRelFP, "file containing line-delineated dictionary of words")
+		interactiveMode = flag.Bool("interactive", false, "run in interactive mode to update dictionary")
 
 		fragments fragmentArgs
 		err       error
@@ -46,7 +47,12 @@ func main() {
 		}
 	}
 
-	solution, score, err := solver.New(solver.WithWordFP(*wordFile)).Solve(fragments)
+	solv := solver.New(
+		solver.WithWordFP(*wordFile),
+		solver.WithInteractivityToggle(*interactiveMode),
+	)
+
+	solution, score, err := solv.Solve(fragments)
 	if err != nil {
 		fmt.Print(fmt.Errorf("solve puzzle: %w", err))
 		os.Exit(1)

@@ -1661,7 +1661,6 @@ ajax
 akimbo
 akin
 akron
-al
 ala
 alabama
 alabamian
@@ -3808,7 +3807,6 @@ artillerist
 artillerists
 artillery
 artily
-artis
 artisan
 artisans
 artist
@@ -48324,7 +48322,6 @@ oz
 ozone
 ozonosphere
 p
-pa
 pabulum
 pacare
 paccar
@@ -49356,7 +49353,6 @@ patties
 patting
 patty
 paucity
-paul
 paula
 paulo
 paunch
@@ -76898,7 +76894,6 @@ wizened
 wizening
 wizens
 wnw
-wo
 wobble
 wobbled
 wobbles
