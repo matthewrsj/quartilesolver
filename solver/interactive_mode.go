@@ -2,7 +2,6 @@ package solver
 
 import (
 	"bufio"
-	"errors"
 	"fmt"
 	"os"
 	"strings"
@@ -10,30 +9,39 @@ import (
 
 // isWordSolution asks the user if the word was a solution in the puzzle.
 func isWordSolution(word string) (bool, error) {
-	var (
-		s   string
-		err error
+	s, err := getInputFromReader(
+		*bufio.NewReader(os.Stdin),
+		fmt.Sprintf("Is %s a solution? (Y/n)", word),
 	)
 
-	r := bufio.NewReader(os.Stdin)
-	if s, err = getInputFromReader(*r, fmt.Sprintf("Is %s a solution? (y/n)", word)); err != nil {
-		return false, fmt.Errorf("get input from reader: %w", err)
-	}
-
-	return isYesResponse(s), nil
+	return isYesDefaultResponse(s), err
 }
 
 func confirmDelete() (bool, error) {
 	s, err := getInputFromReader(
 		*bufio.NewReader(os.Stdin),
-		"Are you sure you want to delete this word from the dictionary? (y/n)",
+		"Are you sure you want to delete this word from the dictionary? (y/N)",
 	)
 
-	return isYesResponse(s), err
+	return isNoDefaultResponse(s), err
 }
 
-func isYesResponse(s string) bool {
-	return strings.HasPrefix(strings.ToLower(s), "y")
+func isYesDefaultResponse(s string) bool {
+	return isBoolResponse(s, true)
+}
+
+func isNoDefaultResponse(s string) bool {
+	return isBoolResponse(s, false)
+}
+
+func isBoolResponse(input string, def bool) bool {
+	cleanInput := strings.TrimSpace(strings.ToLower(input))
+
+	if cleanInput == "" {
+		return def
+	}
+
+	return strings.HasPrefix(cleanInput, "y")
 }
 
 func getInputFromReader(reader bufio.Reader, msg string) (string, error) {
@@ -48,10 +56,6 @@ func getInputFromReader(reader bufio.Reader, msg string) (string, error) {
 
 	if s, err = reader.ReadString('\n'); err != nil {
 		return "", fmt.Errorf("read input: %w", err)
-	}
-
-	if s == "" {
-		return "", errors.New("empty input")
 	}
 
 	return s, nil

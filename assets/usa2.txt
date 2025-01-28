@@ -7111,7 +7111,6 @@ blesses
 blessing
 blessings
 blest
-bleta
 blether
 blethered
 blethering
@@ -9219,7 +9218,6 @@ bywords
 byzantine
 byzantium
 c
-ca
 cab
 cabal
 cabala
@@ -9773,7 +9771,6 @@ cantilevers
 cantina
 cantinas
 canting
-cantle
 cantles
 canto
 canton
@@ -10305,7 +10302,6 @@ castigation
 castigator
 castigators
 castigatory
-castile
 castilian
 castilians
 casting
@@ -10588,7 +10584,6 @@ caymans
 cbi
 cc
 cd
-ce
 cease
 ceased
 ceaseless
@@ -17873,7 +17868,6 @@ deity
 dejected
 dejectedly
 dejection
-del
 delator
 delators
 delaware
@@ -39350,7 +39344,6 @@ lemons
 lemony
 lemur
 lemurs
-len
 lend
 lender
 lenders
@@ -39373,7 +39366,6 @@ lenience
 leniency
 lenient
 leniently
-lenin
 leningrad
 leninism
 leninist
@@ -41064,7 +41056,6 @@ makeweight
 makeweights
 making
 makings
-mal
 mala
 malachite
 maladapted
@@ -46053,7 +46044,6 @@ noxiously
 noxiousness
 nozzle
 nozzles
-nt
 nuance
 nuances
 nub
@@ -51560,7 +51550,6 @@ pneumatics
 pneumoconiosis
 pneumonia
 pneumonic
-po
 poach
 poached
 poacher
@@ -53851,7 +53840,6 @@ provisor
 provisors
 provisory
 provisos
-provo
 provocateur
 provocateurs
 provocation
@@ -55353,7 +55341,6 @@ rasters
 rasure
 rasures
 rat
-rata
 ratability
 ratable
 ratably
@@ -68041,7 +68028,6 @@ systoles
 systolic
 szechwan
 t
-ta
 tab
 tabard
 tabards
@@ -68717,7 +68703,6 @@ tehran
 tektite
 tektites
 tektronix
-tel
 telecamera
 telecameras
 telecast
